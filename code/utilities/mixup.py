@@ -4,7 +4,31 @@ from torch.utils.data import DataLoader
 from torchvision.transforms import v2
 
 class CustomMixUP(torch.nn.Module):
+    '''
+    Custom PyTorch Data Transformation.
+    Personal implementation of MixUp data augmentation technique https://arxiv.org/abs/1710.09412.
+    To summarize it, images and labels of a batch are transformed by linary combinig them with each other.
+    Every image of the batch is paired with another image. A new image is created by making a weighted sum for every pixel component. Same for new label. 
+    The coefficient (called lambda) for the weighted combination is extracted from a beta distribution where alpha=beta.
+    '''
     def __init__(self, alpha = 1.0, first = False, lambdas = None, index = None):
+        '''
+         Parameters
+        ----------
+        - alpha: 
+            Defines the beta distribution where coefficients are extracted from.
+        - first:
+            Wheter this transformation will be applied after (False) or before (True) other transformations. This is a special transformation because is applied per batch, not per iamge (as usual data transformations do).
+        - lambdas:
+            Internal use only. PyTorch tesnor. Must match dataloader size. If specified, alpha is ignored and lambdas are taken from it.
+        - index:
+            Internal use only. Defines the pairing of the images.
+
+        Returns
+        ----------
+        A PyTorch trasnform object.
+
+        '''
         self.alpha = alpha
         self.beta_dist = Beta(self.alpha, self.alpha)
         self.lambdas = lambdas

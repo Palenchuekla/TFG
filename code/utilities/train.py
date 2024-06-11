@@ -53,41 +53,42 @@ def train(
 
   Parameters
   ----------
-  model
+  - model:
     PyTorch model.
-  optimizer
+  - optimizer:
     PyTorch optimizer.
-  loss
+  - loss:
     PyTroch loss function.
-  n_epochs
+  - n_epochs:
     Maximum number of epochs.
-  dataloaders
+  - dataloaders:
     Dictionary with one key ('train') or two keys ('train' and 'val'). Each key must have a torch.utils.data.DataLoader associated. These are the dataloaders used for training and validation.
-  mixup_t
+  - mixup_t:
     Custom PyTorch transform object (check utilities/mixup.py). If defined, MixUp is applied, either before or after the rest of data augmentation techniques.
-  data_augmentation_t
+  - data_augmentation_t:
     Dictionary with two keys, one for every class: '0' and '1'. Every key as assigned a Pytorch transform object that it is applied to all images whose label matches the key.
-  metrics
+  - metrics:
     Dictionary to specificy the metrics to be evalued (appart from the specified loss) during evaluation and training. The key is the identifier of the metric. The associated value is the name of the funtion to call to compute the metric.
-  es_patience
+  - es_patience:
     Early stopping patience.
-  es_tolerance
+  - es_tolerance:
     Early stopping tolerance.
-  es_metric
+  - es_metric:
     Early stopping evalued metric.
-  best_model_save_load
+  - best_model_save_load
     If "True", the weights of the best found model is loaded at the end of the training.
-  scheduler
+  - scheduler:
     PyTorch scheduler to set the policy of actualization of the learning rate (adaptative, decaying, different for some parameter groups ...).
-  results_dir_path
+  - results_dir_path:
     Directory path to store resutls and metadata. Error if already exists to avoid deletaing precious data.
-  verbosity
+  - verbosity:
     If executing outside a Jupyter Notebook, set verbosity to 0.
     if == 1 : Early Stopping and best model hyperparameters are printed at the begining. Progress bars and table with results are printed and actalized during training (Jupyter Notebooks tested, don't really now how it will behave in terminal). Training and validation curves are printed at the end. 
     if >= 2 : Extra information about best model printed.
+
   Returns
   -------
-  pd.DataFrame
+  - pd.DataFrame
       pd.DataFrame containing the train and evaluation results (one row per epoch).
   '''
 
