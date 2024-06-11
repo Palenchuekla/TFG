@@ -82,6 +82,7 @@ def train(
   results_dir_path
     Directory path to store resutls and metadata. Error if already exists to avoid deletaing precious data.
   verbosity
+    If executing outside a Jupyter Notebook, set verbosity to 0.
     if == 1 : Early Stopping and best model hyperparameters are printed at the begining. Progress bars and table with results are printed and actalized during training (Jupyter Notebooks tested, don't really now how it will behave in terminal). Training and validation curves are printed at the end. 
     if >= 2 : Extra information about best model printed.
   Returns
