@@ -332,5 +332,3 @@ def train(
   metrics_df.to_csv(f'{results_dir_path}/results.csv')
 
   return metrics_df
-
-train()
