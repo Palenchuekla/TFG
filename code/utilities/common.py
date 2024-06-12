@@ -20,12 +20,16 @@ def M(alpha, sen, spe):
     return (alpha*sen + (1-alpha)*spe)
 
 def print_submodules_names(module, indent=0):
+    '''
+    Pretty-prints the layered structure of a PyTorch model.
+    Usefull to see how layers are grouped and how can access them.
+    '''
     for name, module in module.named_children():
         name = f"-> {name}"
-    for i in range(indent):
-        name = '\t' + name 
-    print(f"{name}")
-    print_submodules_names(module, indent+1)
+        for i in range(indent):
+            name = '\t' + name 
+        print(f"{name}")
+        print_submodules_names(module, indent+1)
 
 def write_results(exp_results_dir_path, alpha):
     '''
