@@ -13,6 +13,41 @@ def initial_lr_find_Adam(
     n_iters = 1000,
     save_path = None
 ):
+  '''
+  Custom interpretation of the LR-Find method proposed in https://arxiv.org/abs/1506.01186.
+  It trains a model by fitting 1000 minii-batches/iterations. 
+  After every batch is processed, the loss is saved and the learning rate increased exponentially.
+  The slope of the stored loss, allows the expert to set a proper learning rate.
+  The optimizer used is ADAM.
+  Parameters
+  ----------
+  - model: 
+      PyTorch model whose initial learning rate is trying to be computed.
+  - loss:
+      PyTorch loss object.
+  - dataloader:
+      Data to fit.
+  - mixup_t:
+    Custom PyTorch transform object (check utilities/mixup.py). If defined, MixUp is applied, either before or after the rest of data augmentation techniques.
+  - data_augmentation_t:
+    Dictionary with two keys, one for every class: '0' and '1'. Every key as assigned a Pytorch transform object that it is applied to all images whose label matches the key.
+  - min_exp
+    Initial learning rate to evaluate = 10^min_exp.
+  - max_exp
+    Final learning rate to evaluate = 10^max_exp.
+  - n_iters
+    Number of learning rates/batches to evaluate within the minimum and maximum defined.
+  - save_path
+    Path to store results (pnadas dataframe containing the loss per iteration/learning rate candidate).
+  Returns
+  ----------
+  - lres
+    Learning rate exponents evalued.
+  - lrs
+    Learning rates evalued.
+  - losses
+    Loss per processed batch / learning rate evalued.
+  '''
   # lrs to evaluate (candidates)
   lres  = torch.linspace(min_exp, max_exp, n_iters)
   lrs   = 10**lres
