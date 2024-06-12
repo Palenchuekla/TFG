@@ -8,8 +8,8 @@ from tqdm.auto import tqdm #https://pypi.org/project/tqdm/#manual
 from IPython import display
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import confusion_matrix
-from common import specifity_score
-from common import sensitivity_score
+from utilities.common import specifity_score
+from utilities.common import sensitivity_score
 import matplotlib.pyplot as plt
 import operator
 

@@ -50,6 +50,10 @@ def safeMkdir(dir_path):
   '''
   Creates a new directory (recursively) only if it doesn't already exists.
   Firewall for not erasing costly experimental results.
+  Parameters
+  ----------
+  - dir_path
+    New folder path.
   '''
   if not os.path.exists(dir_path):
       os.makedirs(dir_path)
@@ -59,6 +63,18 @@ def safeMkdir(dir_path):
 def M(alpha, sen, spe):
     '''
     Return the weighted mean of the sensibility and specifity of a model.
+    Parameters
+    ----------
+    - sen
+        Sensitivity of the model.
+    - spe
+        Specificty of the model.
+    - alpha
+        Weight for combining them
+    Returns
+    ----------
+    - M
+        alpha * sen + (1 - alpha) * spe.
     '''
     return (alpha*sen + (1-alpha)*spe)
 
