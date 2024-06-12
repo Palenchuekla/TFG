@@ -2,6 +2,49 @@ import os
 import pandas as pd
 import numpy as np
 from IPython import display
+from sklearn.metrics import confusion_matrix
+
+def sensitivity_score(y_true, y_pred):
+    '''
+    Sensitivity for a binary classfier given predicted an real labels.
+    Sensitivity reflects how well a model performs for the positive class (label = 1).
+    Parameters
+    ----------
+    - y_true
+        Real labels.
+    - y_pred
+        Predicted labels.
+    Returns
+    ----------
+    - metric
+        Sensitivity.
+    '''
+    tn, fp, fn, tp = confusion_matrix(y_true, y_pred).ravel()
+    metric = 0
+    if(tp != 0 or fn != 0):
+        metric = tp*1.0 / (tp + fn)
+    return metric
+
+def specifity_score(y_true, y_pred):
+    '''
+    Specifity for a binary classfier given predicted an real labels.
+    Specifity reflects how well a model performs for the negative class (label = 0).
+    Parameters
+    ----------
+    - y_true
+        Real labels.
+    - y_pred
+        Predicted labels.
+    Returns
+    ----------
+    - metric
+        Specifity.
+    '''
+    tn, fp, fn, tp = confusion_matrix(y_true, y_pred).ravel()
+    metric = 0
+    if(tn != 0 or fp != 0):
+        metric = tn*1.0 / (tn + fp)
+    return metric
 
 def safeMkdir(dir_path):
   '''

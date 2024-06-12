@@ -8,23 +8,10 @@ from tqdm.auto import tqdm #https://pypi.org/project/tqdm/#manual
 from IPython import display
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import confusion_matrix
+from common import specifity_score
+from common import sensitivity_score
 import matplotlib.pyplot as plt
 import operator
-import warnings
-
-def sensitivity_score(y_true, y_pred):
-    tn, fp, fn, tp = confusion_matrix(y_true, y_pred).ravel()
-    metric = 0
-    if(tp != 0 or fn != 0):
-        metric = tp*1.0 / (tp + fn)
-    return metric
-
-def specifity_score(y_true, y_pred):
-    tn, fp, fn, tp = confusion_matrix(y_true, y_pred).ravel()
-    metric = 0
-    if(tn != 0 or fp != 0):
-        metric = tn*1.0 / (tn + fp)
-    return metric
 
 def train(
     model : torch.nn.Module,
