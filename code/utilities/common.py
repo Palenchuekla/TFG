@@ -31,33 +31,41 @@ def print_submodules_names(module, indent=0):
         print(f"{name}")
         print_submodules_names(module, indent+1)
 
-def write_results(exp_results_dir_path, alpha):
+def write_results(dir_path, alpha):
     '''
-    Returns results of the cross validation.
-    - Pandas dataframe containing best models metrics per iteration.
-    - Pandas dataframe containing mean/std metrics of best models.
-    Parameters:
-    - alpha_m: coeffcieint for computing the weighted sum of SEN and SPE.
+    Returns results of the cross validation and stores them in the specified folder.
+    Parameters
+    ----------
+    - dir_path
+        Folder where results will be stored.
+    - alpha
+        Coefficient for the weighted sum of sensibility and specifity.
+    Returns
+    ----------
+    - pd_best_model_metrics
+        Pandas dataframe containing best models metrics per iteration.
+    - pd_means_stds
+        Pandas dataframe containing mean/std metrics of best models.
     '''
     # Mean and STD for every partition
     best_model_metrics = [] # i-th element, metrics for the best model found on the i-th partition
     col_names = ['train_loss','train_acc','train_sen','train_spe', 'train_cm','val_loss','val_acc','val_sen','val_spe', 'val_cm']
     mean_std_col_names = ['train_loss','train_acc','train_sen','train_spe','val_loss','val_acc','val_sen','val_spe']
     for k in range(5):
-        aux = pd.read_csv(f'{exp_results_dir_path}/partition_{k}/results.csv')
+        aux = pd.read_csv(f'{dir_path}/partition_{k}/results.csv')
         M_ = M(alpha, aux['val_sen'], aux['val_spe'])
         epoch_best = np.argmax(M_) # Epoch=Row of best model
         metrics = aux.iloc[epoch_best][col_names].to_list() # Metrics of best model
         best_model_metrics.append([epoch_best]+metrics)
     # Save results
     pd_best_model_metrics = pd.DataFrame(best_model_metrics, columns=['epoch']+col_names)
-    pd_best_model_metrics.to_csv(f'{exp_results_dir_path}/metrics_best_model_per_partition_{alpha}.csv', index=False)
+    pd_best_model_metrics.to_csv(f'{dir_path}/metrics_best_model_per_partition_{alpha}.csv', index=False)
     # Mean and stds
     means = np.array(pd_best_model_metrics[mean_std_col_names]).mean(axis=0)
     stds = np.array(pd_best_model_metrics[mean_std_col_names]).std(axis=0)
     row_indexes = ['Mean', 'std']
     pd_means_stds = pd.DataFrame([means,stds], columns=mean_std_col_names, index=row_indexes)
-    pd_means_stds.to_csv(f'{exp_results_dir_path}/metrics_mean_std_best_model_per_partition_{alpha}.csv', index=False)
+    pd_means_stds.to_csv(f'{dir_path}/metrics_mean_std_best_model_per_partition_{alpha}.csv', index=False)
     
     return pd_best_model_metrics, pd_means_stds
 
