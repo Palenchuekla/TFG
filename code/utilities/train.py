@@ -63,7 +63,7 @@ def train(
   - es_metric:
     Early stopping evalued metric.
   - best_model_save_load
-    If "True", the weights of the best found model is loaded at the end of the training.
+    If "True", the weights of the best found model is loaded at the end of the training. Same metric as the Early Stopping.
   - scheduler:
     PyTorch scheduler to set the policy of actualization of the learning rate (adaptative, decaying, different for some parameter groups ...).
   - results_dir_path:
