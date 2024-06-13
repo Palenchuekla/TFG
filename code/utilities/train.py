@@ -295,20 +295,22 @@ def train(
   num_subplots = len(metrics.keys())
   if 'cm' in metrics:
     num_subplots = num_subplots - 1
+  l_aux = [*metrics]
+  if 'cm' in metrics:
+    l_aux.remove('cm')
 
   fig, axs = plt.subplots(1, num_subplots)
   fig.set_facecolor("w")
   fig.set_figheight(fig.get_figheight()*1)
   fig.set_figwidth(fig.get_figwidth()*num_subplots)
 
-  for i, m in enumerate(metrics.keys()):
-    if m != 'cm':
-      for cjto in dataloaders.keys():
-        axs[i].plot(metrics_df[cjto+'_'+m], label=f'{cjto}')
-        if m != 'loss':
-          axs[i].set_ylim(bottom=-0.05, top=1.05)
-      axs[i].set_title(m)
-      axs[i].legend()
+  for i, m in enumerate(l_aux):
+    for cjto in dataloaders.keys():
+      axs[i].plot(metrics_df[cjto+'_'+m], label=f'{cjto}')
+      if m != 'loss':
+        axs[i].set_ylim(bottom=-0.05, top=1.05)
+    axs[i].set_title(m)
+    axs[i].legend()
 
   # Storing training curves
   plt.savefig(f'{results_dir_path}/training_curves.png')
