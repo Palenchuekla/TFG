@@ -75,7 +75,7 @@ def train(
 
   Returns
   -------
-  - pd.DataFrame
+  - pd.DataFrame:
       pd.DataFrame containing the train and evaluation results (one row per epoch).
   '''
 
