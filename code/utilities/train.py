@@ -41,7 +41,7 @@ def train(
   Parameters
   ----------
   - model:
-    PyTorch model.
+    PyTorch model. Must output the logit of the positive class.
   - optimizer:
     PyTorch optimizer.
   - loss:
@@ -61,7 +61,7 @@ def train(
   - es_tolerance:
     Early stopping tolerance.
   - es_metric:
-    Early stopping evalued metric.
+    Early stopping evalued metric. Must be a metrics key.
   - best_model_save_load
     If "True", the weights of the best found model is loaded at the end of the training. Same metric as the Early Stopping.
   - scheduler:
