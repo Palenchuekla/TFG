@@ -37,7 +37,7 @@ class SingleLogitResNet(torch.nn.Module):
         '''
         return sum([p.numel() for p in self.parameters()])
 
-    def forward(self, x, mixup = False):
+    def forward(self, x):
         x = self.feature_extractor(x)
         x = self.fc_head(x)
         return x
