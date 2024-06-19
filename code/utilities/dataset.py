@@ -2,22 +2,30 @@ import torch
 from PIL import Image
 from torch.utils.data import Dataset
 from tqdm.auto import tqdm
-from torchvision import transforms
 from pdf2image import convert_from_path
 from sklearn.model_selection import StratifiedKFold
 import numpy as np
 
 class RAMDataset(Dataset):
   '''
-  Pytorch Dataset created from ...
-  - Pandas.DataFrame containing the metadata of the problem.
+  Pytorch Dataset created from a Pandas.DataFrame containing the metadata of the problem.
   The metadata DataFrame must include one row per sample/image y at least two columns:
   one for the image path and one for the image label.
-  - Two files ".pt" containing images (resized to 224x224) and labels as tensors. 
   
   All images are pre-processed (transformed) and loaded to memory (RAM) to increase computing velocity.
   
   Image formats accepted: JPG, JPGE, PNG and PDF. Consult features.pilinfo(supported_formats=True).
+
+  The i-th element of images and labels matches the i-th row of the metadata dataframe.
+
+  Attributes
+  ----------
+  - images:
+    Tensor pre-processed images.
+  - labels:
+    Labels 
+  - metadata:
+    Pandas.DataFrame containing image-label correspondance and extra information.
   '''
   def __init__(
       self, 
@@ -26,29 +34,29 @@ class RAMDataset(Dataset):
       label_col = 'label',
       transforms = None,
       verbose=True,
-      tensored_imgs_labels=None,
-      expert_da = None,
       ):
-    '''
-    Dataset constructor.
-    '''
-    if tensored_imgs_labels != None:
-      self.imgs = tensored_imgs_labels[0]
-      self.labels = tensored_imgs_labels[1]
-      self.transforms = transforms.Compose(
-          [
-            # PIL.Image (int8 in [0, 255]) --> Pytorch.Tensor (float32 in [0.0, 1.0]).
-            transforms.ToTensor(),
-            # Changes the dimensions of the image.
-            transforms.Resize(
-                size = [224,224],
-                interpolation = transforms.InterpolationMode.BILINEAR,
-                max_size = None,
-                antialias=False #'warn'
-                ),
-        ]
-      )
-    else:
+      '''
+      RAMDataset constructor.
+      Parameters
+      ----------
+      - metadata_df:
+        Pandas.DataFrame containing the metadata of the problem.
+        The metadata DataFrame must include one row per sample/image amd
+        at least two columns: one for the image path and one for the image label.
+      - path_col:
+        String. Header of the column containing each image path.
+      - label_col:
+        String. Header of the column containg each image label.
+      - transforms:
+        torchvision.transforms to be applied to every image before loading.
+      - verbose:
+        Inform of the pre-processing/loading state with a progress bar (can take a while).
+      '''
+      # Metadata
+      self.metadata = metadata_df
+      self.path_col = path_col
+      self.label_col = label_col
+
       # Labels.
       self.labels = torch.tensor(metadata_df[label_col].tolist(), requires_grad=False)
       
@@ -110,13 +118,17 @@ class RAMDataset(Dataset):
     val_idxs = [val_idxs for _, val_idxs in kf.split(X=np.zeros(len(self)), y=self.labels)]
     return train_idxs, val_idxs
 
+
+
 class DiskDataset(Dataset):
   '''
   Pytorch Dataset created from Pandas.DataFrame containing the metadata of the problem.
-  The metadata DataFrame must include one row per sample/image y at least two columns:
+  The metadata DataFrame must include one row per sample/image and at least two columns:
   one for the image path and one for the image label.
 
   Images are transformed and loaded into memory when needed.
+
+  The i-th element of images and labels matches the i-th row of the metadata dataframe.
 
   Image formats accepted: JPG, JPGE, PNG and PDF. Consult features.pilinfo(supported_formats=True).
   '''
@@ -125,11 +137,25 @@ class DiskDataset(Dataset):
       metadata_df, 
       path_col = 'path', 
       label_col = 'label', 
-      transforms=None, 
+      transforms = None, 
       ):
     '''
-    Dataset constructor.
-    '''
+      RAMDataset constructor.
+      Parameters
+      ----------
+      - metadata_df:
+        Pandas.DataFrame containing the metadata of the problem.
+        The metadata DataFrame must include one row per sample/image amd
+        at least two columns: one for the image path and one for the image label.
+      - path_col:
+        String. Header of the column containing each image path.
+      - label_col:
+        String. Header of the column containg each image label.
+      - transforms:
+        torchvision.transforms to be applied to every image before loading.
+      - verbose:
+        Inform of the pre-processing/loading state with a progress bar (can take a while).
+      '''
     # Metadata.
     self.metadata_df = metadata_df
     self.path_col = path_col
