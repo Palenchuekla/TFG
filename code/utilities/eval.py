@@ -17,7 +17,7 @@ def evaluate(
         }
     ):
     '''
-    Function to evaluate a PyTorch binary classifier.
+    Function to evaluate a SingleLogitResNet classifier.
 
     Parameters
     ----------
@@ -46,3 +46,32 @@ def evaluate(
         for m in metrics.keys():
             results[m] = [metrics[m](labels, pred_labels)]
     return results
+
+def pred(
+        model : torch.nn, 
+        inputs : torch.tensor, 
+    ):
+    '''
+    Returns predictions of a SingleLogitResnet (un-normalized probability of the positive class) for a batch of images.
+
+    Parameters
+    ----------
+    - model:
+        SingleLogitResnet. Binary classfier. Must output the logit of the positive class.
+    - input:
+        Tensor of N instances with dimension (N, ...), where "..." are a single instance dimmesions.
+    - labels:
+        Tensor of N labels. Labels must be either 0 or 1.
+    Returns
+    -------
+    - labels:
+      1-D tensor containing the predicted labels.
+    '''
+    # Modify the behavior of certain model layers (generally, dropout and normalization).
+    model.eval()
+    # Computational graph is not computed (required_grad = false). No need to compute gradients through the chain rule.
+    results = {}
+    with torch.no_grad():
+        logits = model(inputs)
+        pred_labels = torch.nn.Sigmoid()(logits).round().to(int).squeeze().tolist()
+    return pred_labels
