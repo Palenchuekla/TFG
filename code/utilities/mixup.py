@@ -45,6 +45,7 @@ class CustomMixUP(torch.nn.Module):
             else:
                 lambdas = self.lambdas
             # Images and labels will be paired: { [0, index[0]], [1, index[1]], ... , [n, index[n]] } 
+            # An image can be combined with itself.
             if self.index == None:
                 index = torch.randperm(batch_size)
             else:

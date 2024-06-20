@@ -1,6 +1,9 @@
 import torch
 
 class BCEL_from_logit_positive_class(torch.nn.Module):
+    '''
+    Custom loss function to compute the binary cross entropy loss form the logit of the positive class.
+    '''
     def __init__(
         self,
         reduction: str = "mean",
