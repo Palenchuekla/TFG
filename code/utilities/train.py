@@ -31,17 +31,18 @@ def train(
     es_tolerance : int = 0,
     es_metric = 'loss',
     best_model_save_load : bool = True,
+    bm_metric = None,
     scheduler: torch.optim.lr_scheduler = None,
     results_dir_path: str = '../results/modelo_X',
     verbosity : int = True,
 ):
   '''
-  Function to train and validate a PyTorch model.
+  Function to train and validate a SingleLogitResnet.
 
   Parameters
   ----------
   - model:
-    PyTorch model. Must output the logit of the positive class.
+    SingleLogitResnet. Binary classfier. Must output the logit of the positive class.
   - optimizer:
     PyTorch optimizer.
   - loss:
@@ -62,8 +63,10 @@ def train(
     Early stopping tolerance.
   - es_metric:
     Early stopping evalued metric. Must be a metrics key.
-  - best_model_save_load
-    If "True", the weights of the best found model is loaded at the end of the training. Same metric as the Early Stopping.
+  - best_model_save_load:
+    If "True", the weights of the best found model is loaded at the end of the training. By default, same metric as the Early Stopping.
+  - bm_metric:
+    Metric to be used to set the best model. If specified and best_model_save_load == True, bm_metric does not need to match Early Stopping metric.
   - scheduler:
     PyTorch scheduler to set the policy of actualization of the learning rate (adaptative, decaying, different for some parameter groups ...).
   - results_dir_path:
@@ -76,7 +79,7 @@ def train(
   Returns
   -------
   - pd.DataFrame:
-      pd.DataFrame containing the train and evaluation results (one row per epoch).
+      pd.DataFrame containing the train and evaluation metrics value. One row per epoch containing: train_loss, train_m1, ..., val_loss, val_m1, ..., epoch_time.
   '''
 
   # Results Folder 
@@ -113,7 +116,11 @@ def train(
 
     # Control varibales for storing the best model
     bm_best_epoch = -1 # Epoch when the model reached the best 'bm_metric' for the validation set
-    bm_metric = es_metric # Not too much sense any other way
+    if bm_metric == None:
+      bm_metric = es_metric # Not too much sense any other way
+    else:
+      if bm_metric not in metrics.keys():
+        raise ValueError(f'Invalid metric for best model evaluation (\"{bm_metric}\"). Must be in {metrics.keys()}.')
     bm_best_value = es_best_value # Not too much sense any other way
     if best_model_save_load:
       if verbosity > 0:
@@ -137,7 +144,7 @@ def train(
     t_start = time.time()
     # For every "mini-batch" ("batch_size" images and labels) ...
     epoch_train_pbar = dataloaders['train']
-    if verbosity > 0:
+    if verbosity > 1:
       epoch_train_pbar = tqdm(iterable=dataloaders['train'], leave=False, unit="mini_batch", desc ='Epoch {} Progress: '.format(epoch)) # Progress bar for the epoch's training phase
     for images, labels in epoch_train_pbar:
         # Apply data augmentation
