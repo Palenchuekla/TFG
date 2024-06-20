@@ -287,7 +287,7 @@ def train(
       # If for es_patience epochs, the evaluated metric has not improved ...
       if es_counter > es_patience:
         # Stop the training process
-        if verbosity > 1:
+        if verbosity > 0:
           print(f"TRAINING STOPED BY EARLY-STOPPING AT EPOCH {epoch}. NO SIGNIFICANT IMPORVEMENT (tolerance={es_tolerance}) ON \'val_{es_metric}\' SINCE EPOCH {es_best_epoch}.")
         break
 
@@ -295,7 +295,7 @@ def train(
   if len(dataloaders) != 1:
     if best_model_save_load == True:
       model.load_state_dict(torch.load(f"{results_dir_path}/best_model_params.pt"))
-      if verbosity > 1:
+      if verbosity > 0:
         print(f'LOADED BEST MODEL FOR \'val_{bm_metric}\' FOUND AT EPOCH {bm_best_epoch} FROM {results_dir_path}/best_model_params.pt .')
   
   # Plots.
