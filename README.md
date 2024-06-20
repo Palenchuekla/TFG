@@ -4,5 +4,5 @@ José Antonio López Palenzuela bachelor's thesis repository. The goal of the pr
 # Repository Content
 - `env.yml`: Exported conda enviroment to get all packages, libraries and dependencies needed to use project's code.
 - `code/utilites`: Folder containing the key funtionalities of the project.
-- `code/notebooks`: Folder containing Jupyter Notebooks that use this functionalities. These notebooks are similar to the ones used dto generate the project actual results, but they are more documented/commented to guide the reader through the process. Also, some notebooks couldn't be included cause they showed sensitive data.
-- `results`: Folder containing the results of some the `code/utilities` notebooks.
+- `code/XXXX.ipynb`: Jupyter Notebook to show how the key funcitonalities were be used. No sensitive data included.
+- `results`: Folder containing the results of some the `code` notebooks.
