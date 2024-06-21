@@ -1,8 +1,10 @@
 # TFG
-José Antonio López Palenzuela bachelor's thesis repository. The goal of the project is to implement a ML/DL model that correctly estimates a person's legal age (over or under 18) based on a panoramic radiography of it's teeth (ortopantomographies). In other words, a binary classifer of images. Images used to implement the actual models can not be included for obvious reasons. Keeping this in mind, this repository stores a copy of the implemented software that can be used outside this project along with some examples of use that do not contain sensible data.
+José Antonio López Palenzuela bachelor's thesis repository. 
+
+The goal of the project was to implement a ML/DL model that correctly estimates a person's legal age (age >= 18?) based on a panoramic radiography of it's teeth (ortopantomographies). In other words, a binary classifer of images. Images used to implement the actual models can not be included for legal reasons. This repository stores the key functionalities developed for the project along with some examples on this software was used. Notice that neither of the examples contain sensible data.
 
 # Repository Content
-- `env.yml`: Exported conda enviroment to get all packages, libraries and dependencies needed to use project's code.
-- `code/utilites`: Folder containing the key funtionalities of the project.
-- `code/XXXX.ipynb`: Jupyter Notebook to show how the key funcitonalities were be used. No sensitive data included.
+- [env.yml](env.yml): Exported conda enviroment to get all packages, libraries and dependencies needed to execute project's code.
+- [utilities](./code/utilities): Folder containing the key funtionalities of the project.
+- [Example 1](./code/experiment_example.ipynb): Jupyter Notebook to showing how to use some of the key functionalities of the project [RAMDataset](./code/utilities/dataset.py), [SingleLogitResnet](./code/utilities/model.py), [LRFind](./code/utilities/lrfind.py), [MixUp](./code/utilities/mixup.py) and [train](./code/utilities/train.py). Notebook cannot be executed, as the dataset is not of public.
 - `results`: Folder containing the results of some the `code` notebooks.
