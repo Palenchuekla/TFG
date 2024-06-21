@@ -93,7 +93,7 @@ def gradCAM(img, model, layer, target=None):
     - layer:
         PyTorch Module. Layer to perform GradCAM at.
     - target:
-        Class to performance GradCAM for.
+        Class to perform GradCAM for.
     Returns
     -------
     - p_filter:
@@ -127,7 +127,7 @@ def justify(
         target = None
         ):
         '''
-        Predict and justify the predicted label of an image. 
+        Predict and justify the predicted label of an image by overlamping GradCAM map.
         Plots a "justification" using the GradCAM (G_p=1) and inverted GradCAM (G_p=0) of the positive class.
         Keep in mind the the inverted GradCAM only matches the probability of the negative class only for SingleLogitResnet models.
         Parameters
@@ -139,7 +139,7 @@ def justify(
         - layer:
             PyTorch Module. Layer to perform GradCAM at.
         - target:
-            Integer. Class to performance GradCAM for.
+            Integer. Class to perform GradCAM for.
         - t:
             PyTorch Transformation. Preprocessing done to images by the model.
         Returns
@@ -158,7 +158,8 @@ def justify(
         p_filter, n_filter = gradCAM(
                 img     = t(Image.open(img_path)),
                 model   = model,
-                layer   = layer
+                layer   = layer,
+                target  = target
         )
         # ------------- Final Figure -------------
         # Figure
