@@ -4,6 +4,11 @@ from sklearn.metrics import accuracy_score
 from sklearn.metrics import confusion_matrix
 from utilities.common import specifity_score
 from utilities.common import sensitivity_score
+import matplotlib.pyplot as plt
+from captum.attr import LayerGradCam
+from PIL import Image
+from torchvision import transforms
+from torchvision.transforms import v2
 
 def evaluate(
         model : torch.nn, 
@@ -75,3 +80,116 @@ def pred(
         logits = model(inputs)
         pred_labels = torch.nn.Sigmoid()(logits).round().to(int).squeeze().tolist()
     return pred_labels
+
+def gradCAM(img, model, layer, target=None):
+    '''
+    Generates a activation map to visualize the most influential regions of an image for predicting a class based on the GradCAM technique.
+    Parameters
+    ----------
+    - model:
+        PyTroch Model.
+    - img:
+        PyTorch tensor. Image to predict and justify.
+    - layer:
+        PyTorch Module. Layer to perform GradCAM at.
+    - target:
+        Class to performance GradCAM for.
+    Returns
+    -------
+    - p_filter:
+      Generated CAM.
+    - n_filer:
+      Inverted CAM (usefull for SingleLogitResnet classifiers).
+    '''
+    # Set everything up
+    layer_gc = LayerGradCam(forward_func=model, layer=layer)
+    # Generate the CAM
+    batch = img.unsqueeze(0).to('cuda')
+    attr = layer_gc.attribute(batch, target=target)
+    attr = attr[0]
+    # Normalize the CAM
+    attr = (attr - attr.min()) / (attr.max()-attr.min())
+    attr = attr.detach().cpu()
+    p_filter = attr
+    # Generate inverted CAM
+    n_filter = attr*-1
+    # Normalize the inverted CAM
+    n_filter = (n_filter - n_filter.min()) / (n_filter.max()-n_filter.min())
+    # Plot CAMs
+    return p_filter, n_filter
+
+
+def justify(
+        model,
+        t,
+        layer,
+        img_path
+        ):
+        '''
+        Predict and justify the label of an image. 
+        Plots a "justification" using the GradCAM (G_p=1) and inverted GradCAM (G_p=0) of the positive class.
+        Parameters
+        ----------
+        - model:
+            SingleLogitResnet Model.
+        - t:
+            PyTorch Transformation. Preprocessing done to images by the model.
+        - layer:
+            PyTorch Module. Layer to perform GradCAM at.
+        - target:
+            Class to performance GradCAM for.
+        Returns
+        -------
+        - p_filter:
+            Generated CAM. Usefull to detect regions that push the model to predict the positve class.
+        - n_filer:
+            Inverted CAM. USefull to detect regions that push the model to predict the negative class.
+        '''
+        # ------------- Predictoin ----------
+        p = pred(
+                model = model,
+                inputs = t(Image.open(img_path)).unsqueeze(0).to('cuda'),
+        )
+        # ------------- GradCAM -------------
+        p_filter, n_filter = gradCAM(
+                img     = t(Image.open(img_path)),
+                model   = model,
+                layer   = layer
+        )
+        # ------------- Final Figure -------------
+        # Figure
+        pil_image = Image.open(img_path)
+        original_width, original_height = pil_image.size
+        resize = v2.Resize(size=(original_height, original_width),  max_size=None, antialias='warn')
+        fig, axs = plt.subplots(2, 2)
+        fig.set_facecolor("w")
+        fig.set_figheight(fig.get_figheight()*1.5)
+        fig.set_figwidth(fig.get_figwidth()*2)
+
+        # Original Image
+        axs[0,0].imshow(pil_image, alpha=1.0)
+        axs[0,0].axis('off')
+        axs[0,0].set_title("Imagen Original")
+
+        # GradCAM Result 
+        axs[0,1].imshow(v2.functional.to_pil_image(resize(p_filter)), alpha=1.0)
+        axs[0,1].axis('off')
+        axs[0,1].set_title("$G_{p=1}$")
+
+        # p==1 
+        axs[1,0].imshow(pil_image, alpha=1.0)
+        axs[1,0].imshow(v2.functional.to_pil_image(resize(p_filter)), alpha=0.5)
+        axs[1,0].axis('off')
+        axs[1,0].set_title("$Imagen + G_{p=1}$")
+
+        # p==0
+        axs[1,1].imshow(pil_image, alpha=1.0)
+        axs[1,1].imshow(v2.functional.to_pil_image(resize(n_filter)), alpha=0.5)
+        axs[1,1].axis('off')
+        axs[1,1].set_title("$Imagen + G_{p=0}$")
+
+        # Figure
+        plt.suptitle(f"Predicted label. p= {p}.")
+        plt.show()
+
+        return p_filter, n_filter
