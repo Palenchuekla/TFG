@@ -123,27 +123,31 @@ def justify(
         model,
         t,
         layer,
-        img_path
+        img_path,
+        target = None
         ):
         '''
-        Predict and justify the label of an image. 
+        Predict and justify the predicted label of an image. 
         Plots a "justification" using the GradCAM (G_p=1) and inverted GradCAM (G_p=0) of the positive class.
+        Keep in mind the the inverted GradCAM only matches the probability of the negative class only for SingleLogitResnet models.
         Parameters
         ----------
         - model:
-            SingleLogitResnet Model.
-        - t:
-            PyTorch Transformation. Preprocessing done to images by the model.
+            PyTorch Model.
+        - img_path:
+            Path of the iamge to predict.
         - layer:
             PyTorch Module. Layer to perform GradCAM at.
         - target:
-            Class to performance GradCAM for.
+            Integer. Class to performance GradCAM for.
+        - t:
+            PyTorch Transformation. Preprocessing done to images by the model.
         Returns
         -------
         - p_filter:
-            Generated CAM. Usefull to detect regions that push the model to predict the positve class.
+            Generated CAM. Usefull to detect regions that push the model to predict the target class.
         - n_filer:
-            Inverted CAM. USefull to detect regions that push the model to predict the negative class.
+            Inverted CAM. Usefull to detect regions that push the model to NOT predict the target class. Matches de GradCAM of the negative class for SingleLogitResnet models.
         '''
         # ------------- Predictoin ----------
         p = pred(
