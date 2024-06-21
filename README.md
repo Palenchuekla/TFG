@@ -8,6 +8,6 @@ The dataset could not be uploaded for legal reasons.
 # Repository Content
 - [env.yml](env.yml) → Exported conda enviroment to get all packages, libraries and dependencies needed to execute project's code.
 - [code/utilities](./code/utilities) → Folder containing the key funtionalities of the project.
-- [code/experiment_example](./code/experiment_example.ipynb) → Jupyter Notebook to showing how the key functionalities of the project were used during experimentation: [RAMDataset](./code/utilities/dataset.py), [SingleLogitResnet](./code/utilities/model.py), [LRFind](./code/utilities/lrfind.py), [MixUp](./code/utilities/mixup.py) and [train](./code/utilities/train.py). Notebook results cannopt be replicated, as the dataset is not public. Progress bars do not display properly.
+- [code/experiment_example](./code/experiment_example.ipynb) → Jupyter Notebook to showing how to use the key implemented functinoalities of the project. [RAMDataset](./code/utilities/dataset.py), [SingleLogitResnet](./code/utilities/model.py), [LRFind](./code/utilities/lrfind.py), [MixUp](./code/utilities/mixup.py) and [train](./code/utilities/train.py) are explicitly called. Notebook's results cannot be replicated, as the dataset is not public. Progress bars do not display properly.
 - [code/justify_example](./code/justify_example.ipynb) → Jupyter Notebook to showing how to use explainability related functionalities: [justify](./code/utilities/eval.py) and [gradCAM](./code/utilities/eval.py).
 - [results](./results): Folder containing the results of some the notebooks.
