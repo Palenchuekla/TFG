@@ -27,7 +27,7 @@ def evaluate(
     Parameters
     ----------
     - model:
-        PyTorch model. Must output the logit of the positive class.
+        SingleLogitResNet model. Must output the logit of the positive class.
     - input:
         Tensor of N instances with dimension (N, ...), where "..." are a single instance dimmesions.
     - labels:
@@ -62,7 +62,7 @@ def pred(
     Parameters
     ----------
     - model:
-        SingleLogitResnet. Binary classfier. Must output the logit of the positive class.
+        SingleLogitResnet model. Must output the logit of the positive class.
     - input:
         Tensor of N instances with dimension (N, ...), where "..." are a single instance dimmesions.
     - labels:
@@ -123,7 +123,7 @@ def justify(
         model,
         t,
         layer,
-        img_path,
+        pil_image,
         target = None
         ):
         '''
@@ -134,8 +134,8 @@ def justify(
         ----------
         - model:
             PyTorch Model.
-        - img_path:
-            Path of the iamge to predict.
+        - pil_image:
+           Image.PIL object. Original image whose label the model must predict.
         - layer:
             PyTorch Module. Layer to perform GradCAM at.
         - target:
@@ -149,21 +149,15 @@ def justify(
         - n_filer:
             Inverted CAM. Usefull to detect regions that push the model to NOT predict the target class. Matches de GradCAM of the negative class for SingleLogitResnet models.
         '''
-        # ------------- Predictoin ----------
-        p = pred(
-                model = model,
-                inputs = t(Image.open(img_path)).unsqueeze(0).to('cuda'),
-        )
         # ------------- GradCAM -------------
         p_filter, n_filter = gradCAM(
-                img     = t(Image.open(img_path)),
+                img     = t(pil_image),
                 model   = model,
                 layer   = layer,
                 target  = target
         )
         # ------------- Final Figure -------------
         # Figure
-        pil_image = Image.open(img_path)
         original_width, original_height = pil_image.size
         resize = v2.Resize(size=(original_height, original_width),  max_size=None, antialias='warn')
         fig, axs = plt.subplots(2, 2)
@@ -174,7 +168,7 @@ def justify(
         # Original Image
         axs[0,0].imshow(pil_image, alpha=1.0)
         axs[0,0].axis('off')
-        axs[0,0].set_title("Imagen Original")
+        axs[0,0].set_title("Original Image")
 
         # GradCAM Result 
         axs[0,1].imshow(v2.functional.to_pil_image(resize(p_filter)), alpha=1.0)
@@ -185,16 +179,15 @@ def justify(
         axs[1,0].imshow(pil_image, alpha=1.0)
         axs[1,0].imshow(v2.functional.to_pil_image(resize(p_filter)), alpha=0.5)
         axs[1,0].axis('off')
-        axs[1,0].set_title("$Imagen + G_{p=1}$")
+        axs[1,0].set_title("Image $+ G_{p=1}$")
 
         # p==0
         axs[1,1].imshow(pil_image, alpha=1.0)
         axs[1,1].imshow(v2.functional.to_pil_image(resize(n_filter)), alpha=0.5)
         axs[1,1].axis('off')
-        axs[1,1].set_title("$Imagen + G_{p=0}$")
+        axs[1,1].set_title("Image $+ G_{p=0}$")
 
         # Figure
-        plt.suptitle(f"Predicted label. p= {p}.")
         plt.show()
 
         return p_filter, n_filter
