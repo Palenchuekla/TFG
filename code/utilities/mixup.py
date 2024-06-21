@@ -20,9 +20,9 @@ class CustomMixUP(torch.nn.Module):
         - first:
             Wheter this transformation will be applied after (False) or before (True) other transformations. This is a special transformation because is applied per batch, not per iamge (as usual data transformations do).
         - lambdas:
-            Internal use only. PyTorch tesnor. Must match dataloader size. If specified, alpha is ignored and lambdas are taken from it.
+            Internal use only. PyTorch tensor. Must match dataloader size. If specified, alpha is ignored and lambdas are taken from this tensor.
         - index:
-            Internal use only. Defines the pairing of the images.
+            Internal use only. PyTorch tensor. Defines the pairing of the images. The i-th image of the batch will be paired with the image of the batch corresponding to the i-th index.
 
         Returns
         ----------
