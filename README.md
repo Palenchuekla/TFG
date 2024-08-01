@@ -7,6 +7,7 @@ The dataset could not be uploaded for legal reasons.
 
 # Repository Content
 - [TFG_Jose_Antonio_Lopez_Palenzuela.pdf](TFG_Jose_Antonio_Lopez_Palenzuela.pdf) → Thesis (written in Spanish).
+- - [Presentacion.pdf](Presentacion.pdf) → Thesis Slides.
 - [env.yml](env.yml) → Exported conda enviroment to get all packages, libraries and dependencies needed to execute project's code.
 - [code/utilities](./code/utilities) → Folder containing the key funtionalities of the project.
 - [code/DL_experiment_example](./code/DL_experiment_example.ipynb) → DL experiment example. Jupyter Notebook that shows how to use the key implemented functinoalities of the project in the context of DL: [RAMDataset](./code/utilities/dataset.py), [SingleLogitResnet](./code/utilities/model.py), [LRFind](./code/utilities/lrfind.py), [MixUp](./code/utilities/mixup.py) and [train](./code/utilities/train.py). All the DL results of the thesis were generated executing a similar notebook, just by changing the value of the hyperparameters of the models (architecture of the feature extractor, learning rate, oversampling, data augmentation transformations).
